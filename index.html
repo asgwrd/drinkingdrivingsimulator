@@ -9,15 +9,15 @@
       var gameInstance = UnityLoader.instantiate("gameContainer", "Build/WebGL.json");
       
       function toggleFullscreen() {
-        const body = document.body;
+        const container = document.querySelector('.game-wrapper');
         
         if (!document.fullscreenElement) {
-          if (body.requestFullscreen) {
-            body.requestFullscreen();
-          } else if (body.webkitRequestFullscreen) {
-            body.webkitRequestFullscreen();
-          } else if (body.msRequestFullscreen) {
-            body.msRequestFullscreen();
+          if (container.requestFullscreen) {
+            container.requestFullscreen();
+          } else if (container.webkitRequestFullscreen) {
+            container.webkitRequestFullscreen();
+          } else if (container.msRequestFullscreen) {
+            container.msRequestFullscreen();
           }
         } else {
           if (document.exitFullscreen) {
@@ -38,7 +38,6 @@
           // Restore original dimensions when exiting fullscreen
           gameContainer.style.width = '1024px';
           gameContainer.style.height = '768px';
-          gameContainer.style.margin = 'auto';
         }
       }
     </script>
@@ -46,41 +45,70 @@
       body {
         margin: 0;
         background: black;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
-      
+
+      .game-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        min-height: 100vh;
+        justify-content: center;
+      }
+
       /* Fullscreen styling */
-      body:fullscreen #gameContainer {
-        width: 100% !important;
-        height: 100% !important;
-        margin: 0 !important;
+      .game-wrapper:fullscreen {
+        width: 100%;
+        height: 100%;
+        background: black;
       }
 
       /* Hide button in fullscreen */
-      body:fullscreen #fullscreenButton {
+      .game-wrapper:fullscreen #fullscreenButton {
         display: none;
+      }
+
+      #gameContainer {
+        width: 1024px;
+        height: 768px;
+        margin: 0 auto;
       }
 
       /* Fullscreen button styling */
       #fullscreenButton {
-        position: fixed;
-        top: 10px;
-        right: 10px;
-        z-index: 9999;
-        padding: 10px;
-        background: rgba(0,0,0,0.5);
+        padding: 12px 24px;
+        background: #4CAF50;
         color: white;
         border: none;
+        border-radius: 4px;
         cursor: pointer;
-        transition: opacity 0.3s;
+        transition: all 0.3s ease;
+        font-size: 16px;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
       }
       
       #fullscreenButton:hover {
-        background: rgba(0,0,0,0.7);
+        background: #45a049;
+        transform: scale(1.05);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      }
+
+      #fullscreenButton:active {
+        transform: scale(0.95);
       }
     </style>
   </head>
   <body>
-    <button id="fullscreenButton" onclick="toggleFullscreen()">Fullscreen</button>
-    <div id="gameContainer" style="width: 1024px; height: 768px; margin: auto"></div>
+    <div class="game-wrapper">
+      <div id="gameContainer"></div>
+      <button id="fullscreenButton" onclick="toggleFullscreen()">Toggle Fullscreen</button>
+    </div>
   </body>
 </html>
