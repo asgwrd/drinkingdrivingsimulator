@@ -9,7 +9,7 @@
       var gameInstance = UnityLoader.instantiate("gameContainer", "Build/WebGL.json");
       
       function toggleFullscreen() {
-        const container = document.querySelector('.game-wrapper');
+        const container = document.getElementById('gameContainer');
         
         if (!document.fullscreenElement) {
           if (container.requestFullscreen) {
@@ -33,82 +33,91 @@
 
       function handleFullscreenChange() {
         const gameContainer = document.getElementById('gameContainer');
+        const canvas = gameContainer.querySelector('canvas');
         
-        if (!document.fullscreenElement) {
-          // Restore original dimensions when exiting fullscreen
+        if (document.fullscreenElement) {
+          // Fullscreen entered - update dimensions
+          gameContainer.style.width = '100vw';
+          gameContainer.style.height = '100vh';
+          canvas.style.objectFit = 'contain';
+          window.scrollTo(0, 0);
+        } else {
+          // Restore original dimensions
           gameContainer.style.width = '1024px';
           gameContainer.style.height = '768px';
+          canvas.style.objectFit = 'none';
         }
       }
+
+      // Handle window resize
+      window.addEventListener('resize', () => {
+        if (document.fullscreenElement) {
+          const gameContainer = document.getElementById('gameContainer');
+          gameContainer.style.width = '100vw';
+          gameContainer.style.height = '100vh';
+        }
+      });
     </script>
     <style>
       body {
         margin: 0;
         background: black;
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        overflow: hidden;
       }
-
-      .game-wrapper {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
-        min-height: 100vh;
-        justify-content: center;
-      }
-
+      
       /* Fullscreen styling */
-      .game-wrapper:fullscreen {
-        width: 100%;
-        height: 100%;
+      #gameContainer:fullscreen {
+        width: 100vw !important;
+        height: 100vh !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        justify-content: center;
+        align-items: center;
         background: black;
       }
 
-      /* Hide button in fullscreen */
-      .game-wrapper:fullscreen #fullscreenButton {
-        display: none;
+      #gameContainer:-webkit-full-screen {
+        width: 100% !important;
+        height: 100% !important;
       }
 
-      #gameContainer {
-        width: 1024px;
-        height: 768px;
-        margin: 0 auto;
+      #gameContainer canvas {
+        max-width: 100%;
+        max-height: 100%;
+      }
+
+      /* Hide button in fullscreen */
+      :fullscreen #fullscreenButton {
+        display: none;
       }
 
       /* Fullscreen button styling */
       #fullscreenButton {
-        padding: 12px 24px;
-        background: #4CAF50;
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        z-index: 9999;
+        padding: 10px;
+        background: rgba(0,0,0,0.5);
         color: white;
         border: none;
-        border-radius: 4px;
         cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 16px;
-        font-weight: bold;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        transition: opacity 0.3s;
       }
       
       #fullscreenButton:hover {
-        background: #45a049;
-        transform: scale(1.05);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        background: rgba(0,0,0,0.7);
       }
 
-      #fullscreenButton:active {
-        transform: scale(0.95);
+      /* Reset browser defaults in fullscreen */
+      ::backdrop {
+        background: black;
       }
     </style>
   </head>
   <body>
-    <div class="game-wrapper">
-      <div id="gameContainer"></div>
-      <button id="fullscreenButton" onclick="toggleFullscreen()">Toggle Fullscreen</button>
-    </div>
+    <button id="fullscreenButton" onclick="toggleFullscreen()">Fullscreen</button>
+    <div id="gameContainer" style="width: 1024px; height: 768px; margin: auto"></div>
   </body>
 </html>
